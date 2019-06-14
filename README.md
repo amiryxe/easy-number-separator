@@ -3,6 +3,8 @@ Easy Number Separator is a simple jQuery plugin for Separate input numbers in te
 
 Guide and Documentation (Coming Soon)
 
+### <a href="https://amirsaa.github.io/Easy-Number-Separator/" target="_blank">View Demo</a>
+
 ### Features
 
 - Separate number by comma character (`,`) when typing in input automatically and realtime.
