@@ -23,16 +23,12 @@ $(document).ready(function () {
     }
 
     // Set Currency Separator to input fields
-    $(document).on('keypress , paste', '.number-separator', function (e) {
-        if (/^-?\d*[,.]?(\d{0,3},)*(\d{3},)?\d{0,3}$/.test(e.key)) {
-            $('.number-separator').on('input', function () {
-                e.target.value = numberSeparator(e.target.value);
-            });
+    $('.number-separator').on('input', function (e) {
+        if (/^-?\d*[,.]?(\d{0,3},)*(\d{3},)?\d{0,3}$/.test(e.originalEvent.data)) {
+            e.target.value = numberSeparator(e.target.value);
         } else {
-            e.preventDefault();
-            return false;
+            e.target.value = e.target.value.substring(0, e.target.value.length - 1);
         }
     });
 
-
-})
+});
