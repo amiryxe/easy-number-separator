@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     // Currency Separator
     var commaCounter = 10;
 
@@ -31,4 +30,11 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '.number-separator', function (e) {
+        if (/^-?\d*[,.]?(\d{0,3},)*(\d{3},)?\d{0,3}$/.test(e.originalEvent.data)) {
+            e.target.value = numberSeparator(e.target.value);
+        } else {
+            e.target.value = e.target.value.substring(0, e.target.value.length - 1);
+        }
+    });
 });
