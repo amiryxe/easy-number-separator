@@ -1,15 +1,11 @@
-$(document).ready(function () {
-  $(document).on('input', '.number-separator', function (e) {
-    if (/^[0-9.,]+$/.test($(this).val())) {
-      $(this).val(
-        parseFloat($(this).val().replace(/,/g, '')).toLocaleString('en')
-      );
+document.querySelectorAll('.number-separator').forEach((item) => {
+  item.addEventListener('input', (e) => {
+    if (/^[0-9.,]+$/.test(e.target.value)) {
+      e.target.value = parseFloat(
+        e.target.value.replace(/,/g, '')
+      ).toLocaleString('en');
     } else {
-      $(this).val(
-        $(this)
-          .val()
-          .substring(0, $(this).val().length - 1)
-      );
+      e.target.value = e.target.value.substring(0, e.target.value.length - 1);
     }
   });
 });
