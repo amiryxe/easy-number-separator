@@ -25,5 +25,3 @@ Easy Number Separator is a useful jQuery Plugin for Currency Format by Comma Sep
 3. Now just add `number-separator` class to your text input for separating numbers.
 
 Enjoy :)
-
-tnx to <a href="https://github.com/amirmms/" target="_blank">amirmms</a>
