@@ -2,7 +2,7 @@
 
 Easy Number Separator is a useful Plugin for Currency Format by Comma Separator on Input
 
-### <a href="https://amirsaa.github.io/Easy-Number-Separator/" target="_blank">View Demo</a>
+### <a href="https://amiryxe.github.io/Easy-Number-Separator/" target="_blank">View Demo</a>
 
 ### Features
 
