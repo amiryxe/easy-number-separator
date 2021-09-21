@@ -1,8 +1,8 @@
 # Easy-Number-Separator
 
-Easy Number Separator is a useful Plugin for Currency Format by Comma Separator on Input
+Easy Number Separator is a useful plugin for currency format by Comma separator on input.
 
-### <a href="https://amiryxe.github.io/Easy-Number-Separator/" target="_blank">View Demo</a>
+### <a href="https://amiryxe.github.io/easy-number-separator/" target="_blank">View Demo</a>
 
 ### Features
 
