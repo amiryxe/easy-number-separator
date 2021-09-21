@@ -71,13 +71,13 @@
   <div id="main">
     <h1>Easy Number Separator</h1>
 
-    <input type="text" class="number-separator" placeholder="Enter Your Number Here..." />
+    <input type="text" class="number-separator" placeholder="Enter Your Number..." />
 
     <p>
       it helps you to separate numbers when entered in a input text.
       <br />
 
-      just add <span>number-separator</span> class to your input text element
+      just call <code>easyNumberSeparator()</code> function and pass your class input to this.
       :)
     </p>
 
@@ -89,6 +89,14 @@
   </div>
 
   <script src="easy-number-separator.js"></script>
+
+  <script>
+    easyNumberSeparator({
+      selector: '.number-separator',
+      separator: ','
+    })
+  </script>
+
 </body>
 
 </html>
