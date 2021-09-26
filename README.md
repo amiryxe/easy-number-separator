@@ -1,6 +1,6 @@
-# Easy-Number-Separator
+# Easy Number Separator
 
-Easy Number Separator is a useful plugin for currency format by Comma separator on input.
+Easy Number Separator is a useful pure JavaScript plugin for currency format by Comma separator (`,`) on input.
 
 ### <a href="https://amiryxe.github.io/easy-number-separator/" target="_blank">View Demo</a>
 
