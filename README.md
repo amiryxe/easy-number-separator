@@ -31,4 +31,9 @@ easyNumberSeparator({
 })
 ```
 
+### CDN
+```html
+<script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js"></script>
+```
+
 Enjoy :)
