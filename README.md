@@ -1,14 +1,14 @@
 # Easy Number Separator
 
-Easy Number Separator is a useful pure JavaScript plugin for currency format by Comma separator (`,`) on input.
+Easy Number Separator is a useful pure JavaScript plugin for currency format and separate numbers on input.
 
 ### <a href="https://amiryxe.github.io/easy-number-separator/" target="_blank">View Demo</a>
 
 ### Features
 
-- Separate number by comma character (`,`) when typing in input automatically and realtime.
+- Separate number by your custom character separator like comma character (`,`) or any other characters.
 - Does not accept non-numeric characters.
-- Can work on any text inputs just by add `number-separator` class.
+- Can work on any text inputs by your selector.
 
 ### How to Use
 
@@ -18,6 +18,17 @@ Easy Number Separator is a useful pure JavaScript plugin for currency format by 
 <script src="js/easy-number-separator.js"></script>
 ```
 
-2. Now just add `number-separator` class to your text input for separating numbers.
+3. Make your input text field like this:    
+```html
+<input type="text" class="number-separator" />
+```
+
+3. Select your input element:
+```javascript
+easyNumberSeparator({
+    selector: '.number-separator',
+    separator: ','
+})
+```
 
 Enjoy :)
