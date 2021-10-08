@@ -41,5 +41,6 @@ function easyNumberSeparator(config) {
         return false;
       }
     });
+    el.value = numberSeparator(el.value);
   });
 }
