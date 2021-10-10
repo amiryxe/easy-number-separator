@@ -6,7 +6,7 @@ Easy Number Separator is a useful pure JavaScript plugin for currency format and
 
 ### Features
 
-- Separate number by your custom character separator like comma character (`,`) or any other characters.
+- Separate numbers by your custom character separators like comma character (`,`) or any other characters.
 - Does not accept non-numeric characters.
 - Can work on any text inputs by your selector.
 
