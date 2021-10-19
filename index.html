@@ -64,6 +64,17 @@
     a:hover {
       opacity: 1;
     }
+
+    #result_input {
+      font-size: 14px;
+      padding: .5rem;
+    }
+
+    code {
+      background: lightblue;
+      border-radius: 3px;
+      padding: .2rem .5rem;
+    }
   </style>
 </head>
 
@@ -74,11 +85,16 @@
     <input type="text" class="number-separator" placeholder="Enter Your Number..." />
 
     <p>
-      it helps you to separate numbers when entered in a input text.
+      It helps you to separate numbers when entered in a input text.
       <br />
 
-      just call <code>easyNumberSeparator()</code> function and pass your class input to this.
+      Just call <code>easyNumberSeparator()</code> function and pass your class input to this.
       :)
+    </p>
+
+    <p>
+      If you want to send data to the server, you can set a result input by <code>resultInput</code> property and hold
+      the original value.
     </p>
 
     <input type="text" id="result_input" name="">
