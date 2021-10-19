@@ -5,9 +5,9 @@ function easyNumberSeparator(config) {
   const obj = config
     ? config
     : {
-        selector: ".number-separator",
-        separator: ",",
-      };
+      selector: ".number-separator",
+      separator: ",",
+    };
 
   function numberSeparator(num) {
     for (let i = 0; i < commaCounter; i++) {
@@ -23,8 +23,15 @@ function easyNumberSeparator(config) {
       y = y.replace(rgx, "$1" + obj.separator + "$2");
     }
     commaCounter++;
+
+    const resInput = document.querySelector(obj.resultInput)
+    if (resInput) {
+      resInput.value = num.replace(obj.separator, "")
+    }
+
     return y + z;
   }
+
 
   document.querySelectorAll(obj.selector).forEach(function (el) {
     el.addEventListener("keypress", function (e) {
