@@ -32,18 +32,18 @@ function easyNumberSeparator(config) {
     return y + z;
   }
 
-
   document.querySelectorAll(obj.selector).forEach(function (el) {
-    el.addEventListener("keypress", function (e) {
+    el.addEventListener("input", function (e) {
       const reg = new RegExp(
         `^-?\\d*[${obj.separator}.]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
       );
 
-      if (reg.test(e.key)) {
-        el.addEventListener("input", function () {
-          e.target.value = numberSeparator(e.target.value);
-        });
+      const key = e.data || this.value.substr(-1)
+
+      if (reg.test(key)) {
+        e.target.value = numberSeparator(e.target.value);
       } else {
+        e.target.value = e.target.value.substring(0, e.target.value.length - 1);
         e.preventDefault();
         return false;
       }
