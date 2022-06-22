@@ -31,6 +31,14 @@ easyNumberSeparator({
 })
 ```
 
+### Options
+|Title|Default|Description|
+|-----|-------|-----------|
+|selector|`.number-separator`|Selects the input element|
+|separator|`,`|The character of number separator|
+|decimalSeparator|`.`|The character of decimal separator|
+|resultInput|-|Raw number generated for purposes such as server submission and calculations| 
+
 ### Send data to server
 If you want to send data to the server, you can set a result input by `resultInput` property and hold the original value.
 
