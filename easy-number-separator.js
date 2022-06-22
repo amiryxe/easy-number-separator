@@ -7,6 +7,7 @@ function easyNumberSeparator(config) {
     : {
       selector: ".number-separator",
       separator: ",",
+      decimal_separator: "."
     };
 
   function numberSeparator(num) {
@@ -14,9 +15,9 @@ function easyNumberSeparator(config) {
       num = num.replace(obj.separator, "");
     }
 
-    x = num.split(".");
+    x = num.split(obj.decimal_separator);
     y = x[0];
-    z = x.length > 1 ? "." + x[1] : "";
+    z = x.length > 1 ? obj.decimal_separator + x[1] : "";
     let rgx = /(\d+)(\d{3})/;
 
     while (rgx.test(y)) {
@@ -27,6 +28,7 @@ function easyNumberSeparator(config) {
     const resInput = document.querySelector(obj.resultInput)
     if (resInput) {
       resInput.value = num.replace(obj.separator, "")
+      resInput.value = num.replace(obj.decimal_separator, ".")
     }
 
     return y + z;
