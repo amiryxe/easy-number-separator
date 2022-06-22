@@ -2,13 +2,14 @@ function easyNumberSeparator(config) {
   // Currency Separator
   let commaCounter = 10;
 
-  const obj = config
-    ? config
-    : {
-      selector: ".number-separator",
-      separator: ",",
-      decimal_separator: "."
-    };
+  const obj = {
+    selector: config.selector || ".number-separator",
+    separator: config.separator || ",",
+    decimal_separator: config.decimal_separator || ".",
+    resultInput: config.resultInput
+  }
+
+  console.log(obj.separator);
 
   function numberSeparator(num) {
     for (let i = 0; i < commaCounter; i++) {
@@ -25,10 +26,13 @@ function easyNumberSeparator(config) {
     }
     commaCounter++;
 
-    const resInput = document.querySelector(obj.resultInput)
-    if (resInput) {
-      resInput.value = num.replace(obj.separator, "")
-      resInput.value = num.replace(obj.decimal_separator, ".")
+    if (obj.resultInput) {
+      const resInput = document.querySelector(obj.resultInput)
+
+      if (resInput) {
+        resInput.value = num.replace(obj.separator, "")
+        resInput.value = num.replace(obj.decimal_separator, ".")
+      }
     }
 
     return y + z;
@@ -37,7 +41,7 @@ function easyNumberSeparator(config) {
   document.querySelectorAll(obj.selector).forEach(function (el) {
     el.addEventListener("input", function (e) {
       const reg = new RegExp(
-        `^-?\\d*[${obj.separator}.]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
+        `^-?\\d*[${obj.separator}${obj.decimal_separator}]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
       );
 
       const key = e.data || this.value.substr(-1)
