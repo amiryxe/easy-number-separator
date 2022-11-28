@@ -40,7 +40,7 @@ easyNumberSeparator({
 |resultInput|-|Raw number generated for purposes such as server submission and calculations| 
 
 ### Send data to server
-If you want to send data to the server, you can set a result input by `resultInput` property and hold the original value.
+If you want to send pure data to the server (without symbols), you can set a result input by `resultInput` property and hold the original value.
 
 #### Example:
 
