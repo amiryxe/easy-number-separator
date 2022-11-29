@@ -9,8 +9,6 @@ function easyNumberSeparator(config) {
     resultInput: config.resultInput
   }
 
-  console.log(obj.separator);
-
   function numberSeparator(num) {
     for (let i = 0; i < commaCounter; i++) {
       num = num.replace(obj.separator, "");
@@ -38,22 +36,33 @@ function easyNumberSeparator(config) {
     return y + z;
   }
 
-  document.querySelectorAll(obj.selector).forEach(function (el) {
-    el.addEventListener("input", function (e) {
-      const reg = new RegExp(
-        `^-?\\d*[${obj.separator}${obj.decimalSeparator}]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
-      );
+  function listenFields() {
+    document.querySelectorAll(obj.selector).forEach(function (el) {
+      el.addEventListener("input", function (e) {
+        const reg = new RegExp(
+          `^-?\\d*[${obj.separator}${obj.decimalSeparator}]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
+        );
 
-      const key = e.data || this.value.substr(-1)
+        const key = e.data || this.value.substr(-1)
 
-      if (reg.test(key)) {
-        e.target.value = numberSeparator(e.target.value);
-      } else {
-        e.target.value = e.target.value.substring(0, e.target.value.length - 1);
-        e.preventDefault();
-        return false;
-      }
+        if (reg.test(key)) {
+          e.target.value = numberSeparator(e.target.value);
+        } else {
+          e.target.value = e.target.value.substring(0, e.target.value.length - 1);
+          e.preventDefault();
+          return false;
+        }
+      });
+      el.value = numberSeparator(el.value);
     });
-    el.value = numberSeparator(el.value);
+  }
+
+  listenFields()
+
+  // Fire separator when every element append to page
+  document.addEventListener("DOMNodeInserted", function (e) {
+    if ((e.target).classList.contains(obj.selector.replace('.', ''))) {
+      listenFields()
+    }
   });
 }
