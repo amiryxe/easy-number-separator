@@ -1,3 +1,7 @@
+/*!
+ * Easy Number Separator v1.1.0
+ * https://github.com/amiryxe/easy-number-separator
+ */
 function easyNumberSeparator(config) {
   config = config || {};
 

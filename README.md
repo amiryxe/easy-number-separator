@@ -1,15 +1,19 @@
 # Easy Number Separator
 
+[![Release](https://img.shields.io/github/v/release/amiryxe/easy-number-separator)](https://github.com/amiryxe/easy-number-separator/releases)
+[![jsDelivr](https://data.jsdelivr.com/v1/package/gh/amiryxe/easy-number-separator/badge)](https://www.jsdelivr.com/package/gh/amiryxe/easy-number-separator)
+
 A tiny, dependency-free JavaScript plugin that formats numbers in text inputs while you type (e.g. `1234567.5` → `1,234,567.5`). It rejects non-numeric characters and can give you the raw number for form submission.
 
-**[View demo](https://amiryxe.github.io/easy-number-separator/)**
+**[View demo](https://amiryxe.github.io/easy-number-separator/)** · [Changelog](CHANGELOG.md)
 
 ## Install
 
 **CDN**
 ```html
-<script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator@1.1.0/easy-number-separator.js"></script>
 ```
+Pinning a version (`@1.1.0`) is recommended. Use `@latest` for the newest release, or `@master` for the latest unreleased code.
 
 **Download:** save [`easy-number-separator.js`](https://raw.githubusercontent.com/amiryxe/easy-number-separator/master/easy-number-separator.js) into your project and include it:
 ```html
