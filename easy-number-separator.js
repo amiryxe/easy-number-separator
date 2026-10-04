@@ -9,6 +9,11 @@ function easyNumberSeparator(config) {
     resultInput: config.resultInput
   }
 
+  // Escape a string so it is matched literally inside a regular expression
+  function escapeRegExp(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\\-\/]/g, "\\$&");
+  }
+
   function numberSeparator(num) {
     for (let i = 0; i < commaCounter; i++) {
       num = num.replace(obj.separator, "");
@@ -39,8 +44,10 @@ function easyNumberSeparator(config) {
   function listenFields() {
     document.querySelectorAll(obj.selector).forEach(function (el) {
       el.addEventListener("input", function (e) {
+        const sep = escapeRegExp(obj.separator);
+        const dec = escapeRegExp(obj.decimalSeparator);
         const reg = new RegExp(
-          `^-?\\d*[${obj.separator}${obj.decimalSeparator}]?(\\d{0,3}${obj.separator})*(\\d{3}${obj.separator})?\\d{0,3}$`
+          `^-?\\d*[${sep}${dec}]?(\\d{0,3}${sep})*(\\d{3}${sep})?\\d{0,3}$`
         );
 
         const key = e.data || this.value.substr(-1)

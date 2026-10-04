@@ -63,4 +63,10 @@ easyNumberSeparator({
 <script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js"></script>
 ```
 
+### Running tests
+Tests use Node's built-in test runner (Node 18+) and have no dependencies:
+```bash
+node --test test/
+```
+
 Enjoy :)
