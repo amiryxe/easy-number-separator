@@ -1,122 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
-
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Easy Number Separator</title>
-
-  <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap" rel="stylesheet" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Easy Number Separator – Demo</title>
   <style>
-    body {
-      background: #eee;
-      font-family: 'Cairo', sans-serif;
-    }
-
-    #main {
-      margin: 0 auto;
-      display: block;
-      padding: 0 20px;
-      text-align: center;
-    }
-
-    h1 {
-      font-family: 'Fredoka One', cursive;
-      font-weight: 100;
-    }
-
-    input[type='text'] {
-      margin: 0 auto;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #bbb;
-      font-size: 36px;
-      display: block;
-      text-align: center;
-      font-family: 'Cairo', sans-serif;
-    }
-
-    input[type='text']::placeholder {
-      color: #ccc;
-    }
-
-    span {
-      background: darkorange;
-      color: #fff;
-      border-radius: 3px;
-      padding: 0 5px;
-    }
-
-    a {
-      text-decoration: none;
-      background: #ccc;
-      border-radius: 3px;
-      padding: 0 5px;
-      color: #333;
-      opacity: 0.8;
-    }
-
-    a:hover {
-      opacity: 1;
-    }
-
-    #result_input {
-      font-size: 14px;
-      padding: .5rem;
-    }
-
-    code {
-      background: lightblue;
-      border-radius: 3px;
-      padding: .2rem .5rem;
-    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f5f6f8; color: #222; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+    header { text-align: center; margin-bottom: 28px; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    header p { margin: 0 0 12px; color: #555; }
+    header a { color: #0b63ce; margin: 0 8px; text-decoration: none; }
+    header a:hover { text-decoration: underline; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    section { background: #fff; border: 1px solid #e3e5e8; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    h2 { margin: 0; font-size: 17px; }
+    section p { margin: 0; font-size: 14px; color: #555; }
+    input { width: 100%; padding: 10px 12px; font-size: 20px; border: 1px solid #c9ccd1; border-radius: 6px; }
+    input:focus { outline: 2px solid #0b63ce33; border-color: #0b63ce; }
+    .raw { font-size: 14px; padding: 6px 10px; background: #f5f6f8; color: #555; }
+    label { font-size: 13px; color: #666; }
+    button { padding: 8px 12px; border: 0; border-radius: 6px; background: #0b63ce; color: #fff; font-size: 14px; cursor: pointer; }
+    pre { margin: auto 0 0; padding: 10px 12px; background: #1f2430; color: #e6e6e6; border-radius: 6px; font-size: 12.5px; overflow-x: auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .out { font-size: 13px; color: #0a7a3d; min-height: 1.2em; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    footer { text-align: center; margin-top: 28px; font-size: 13px; color: #888; }
+    footer a { color: #0b63ce; text-decoration: none; }
   </style>
 </head>
-
 <body>
-  <div id="main">
-    <h1>Easy Number Separator</h1>
+  <main>
+    <header>
+      <h1>Easy Number Separator</h1>
+      <p>A tiny, dependency-free JavaScript plugin that formats numbers while you type.</p>
+      <a href="https://github.com/amiryxe/easy-number-separator" target="_blank">GitHub &amp; docs</a>
+      <a href="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js" target="_blank">CDN file</a>
+    </header>
 
-    <input type="text" class="number-separator" placeholder="Enter Your Number..." />
+    <div class="grid">
+      <section>
+        <h2>1. Basic</h2>
+        <p>Comma separator, letters are rejected.</p>
+        <input type="text" class="ex-basic" placeholder="1,234,567.89" />
+        <pre><code>easyNumberSeparator({
+  selector: '.ex-basic'
+})</code></pre>
+      </section>
 
-    <p>
-      It helps you to separate numbers when entered in a input text.
-      <br />
+      <section>
+        <h2>2. Custom separator</h2>
+        <p>European style: <code>.</code> for thousands, <code>,</code> for decimals.</p>
+        <input type="text" class="ex-custom" placeholder="1.234.567,89" />
+        <pre><code>easyNumberSeparator({
+  selector: '.ex-custom',
+  separator: '.',
+  decimalSeparator: ','
+})</code></pre>
+      </section>
 
-      Just call <code>easyNumberSeparator()</code> function and pass your class input to this.
-      :)
-    </p>
+      <section>
+        <h2>3. Max decimals + raw value</h2>
+        <p>At most 2 decimals; the raw number goes to another input.</p>
+        <input type="text" class="ex-decimals" placeholder="1,234.56" />
+        <label>Raw value (<code>#raw-decimals</code>)</label>
+        <input type="text" id="raw-decimals" class="raw" readonly />
+        <pre><code>easyNumberSeparator({
+  selector: '.ex-decimals',
+  maxDecimals: 2,
+  resultInput: '#raw-decimals'
+})</code></pre>
+      </section>
 
-    <p>
-      If you want to send data to the server, you can set a result input by <code>resultInput</code> property and hold
-      the original value.
-    </p>
+      <section>
+        <h2>4. Two inputs on one page</h2>
+        <p>Each input keeps its own raw value.</p>
+        <input type="text" id="price" placeholder="Price" />
+        <input type="text" id="price-raw" class="raw" readonly placeholder="raw price" />
+        <input type="text" id="qty" placeholder="Quantity" />
+        <input type="text" id="qty-raw" class="raw" readonly placeholder="raw quantity" />
+        <pre><code>easyNumberSeparator({
+  selector: '#price',
+  resultInput: '#price-raw'
+})
+easyNumberSeparator({
+  selector: '#qty',
+  resultInput: '#qty-raw'
+})</code></pre>
+      </section>
 
-    <input type="text" id="result_input" name="">
+      <section>
+        <h2>5. Submit raw values</h2>
+        <p>The form sends the unformatted number under the input's <code>name</code>.</p>
+        <form id="raw-form">
+          <input type="text" class="ex-submit" name="amount" placeholder="2,500,000" />
+        </form>
+        <button type="submit" form="raw-form">Submit (preview)</button>
+        <div class="out" id="form-out"></div>
+        <pre><code>easyNumberSeparator({
+  selector: '.ex-submit',
+  submitRaw: true
+})</code></pre>
+      </section>
 
-    <br />
-    <br />
+      <section>
+        <h2>6. Disallow paste</h2>
+        <p>Pasting is blocked here. Elsewhere, pasted text such as <code>$1,234 USD</code> is cleaned up.</p>
+        <input type="text" class="ex-nopaste" placeholder="Try pasting here" />
+        <pre><code>easyNumberSeparator({
+  selector: '.ex-nopaste',
+  disallowPaste: true
+})</code></pre>
+      </section>
+    </div>
 
-    <a href="https://github.com/amiryxe/easy-number-separator/" target="_blank">View Guide and download</a>
-    <a href="https://github.com/amiryxe/" target="_blank">amiryxe Github</a>
-  </div>
-
-  <script src="easy-number-separator.js"></script>
+    <footer>Made by <a href="https://github.com/amiryxe" target="_blank">amiryxe</a></footer>
+  </main>
 
   <script>
-    easyNumberSeparator({
-      selector: '.number-separator',
-      separator: ',',
-      decimalSeparator: '.',
-      resultInput: '#result_input',
-    })
+    function initDemo() {
+      easyNumberSeparator({ selector: '.ex-basic' })
+      easyNumberSeparator({ selector: '.ex-custom', separator: '.', decimalSeparator: ',' })
+      easyNumberSeparator({ selector: '.ex-decimals', maxDecimals: 2, resultInput: '#raw-decimals' })
+      easyNumberSeparator({ selector: '#price', resultInput: '#price-raw' })
+      easyNumberSeparator({ selector: '#qty', resultInput: '#qty-raw' })
+      easyNumberSeparator({ selector: '.ex-submit', submitRaw: true })
+      easyNumberSeparator({ selector: '.ex-nopaste', disallowPaste: true })
+
+      // Show what the form would send instead of actually submitting it
+      document.getElementById('raw-form').addEventListener('submit', function (e) {
+        e.preventDefault()
+        const data = new URLSearchParams(new FormData(this)).toString()
+        document.getElementById('form-out').textContent = 'Sent: ' + (data || '(empty)')
+      })
+    }
   </script>
-
+  <!-- Uses the local file; falls back to the CDN copy if it can't be loaded -->
+  <script src="easy-number-separator.js" onload="initDemo()" onerror="
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js';
+    s.onload = initDemo;
+    document.body.appendChild(s);
+  "></script>
 </body>
-
 </html>

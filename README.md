@@ -1,125 +1,97 @@
 # Easy Number Separator
 
-Easy Number Separator is a useful pure JavaScript plugin for currency format and separate numbers on input.
+A tiny, dependency-free JavaScript plugin that formats numbers in text inputs while you type (e.g. `1234567.5` → `1,234,567.5`). It rejects non-numeric characters and can give you the raw number for form submission.
 
-### <a href="https://amiryxe.github.io/easy-number-separator/" target="_blank">View Demo</a>
+**[View demo](https://amiryxe.github.io/easy-number-separator/)**
 
-### Features
+## Install
 
-- Separate numbers by your custom character separators like comma character (`,`) or any other characters.
-- Does not accept non-numeric characters.
-- Can work on any text inputs by your selector.
-
-### How to Use
-
-1. Add **Easy Number Separator** plugin to your project:
-
-```html
-<script src="js/easy-number-separator.js"></script>
-```
-
-3. Make your input text field like this:    
-```html
-<input type="text" class="number-separator" />
-```
-
-3. Select your input element:
-```javascript
-easyNumberSeparator({
-    selector: '.number-separator',
-    separator: ','
-})
-```
-
-### Options
-|Title|Default|Description|
-|-----|-------|-----------|
-|selector|`.number-separator`|Selects the input element|
-|separator|`,`|The character of number separator|
-|decimalSeparator|`.`|The character of decimal separator|
-|resultInput|-|Raw number generated for purposes such as server submission and calculations|
-|submitRaw|`false`|When `true`, each input's `name` is moved to an automatically created hidden input that holds the raw value, so forms submit the unformatted number|
-|maxDecimals|-|Maximum number of decimal places allowed (e.g. `2`). `0` disallows decimals. Unlimited when not set|
-|disallowPaste|`false`|When `true`, pasting into the input is blocked|
-|disallowDrop|`false`|When `true`, dragging and dropping text into the input is blocked|
-
-### Send data to server
-If you want to send pure data to the server (without symbols), you can set a result input by `resultInput` property and hold the original value.
-
-#### Example:
-
-##### HTML:
-```html
-<input type="text" id="result_input" name="">
-```
-##### JavaScript:
-```javascript
-easyNumberSeparator({
-    selector: '.number-separator',
-    separator: ',',
-    resultInput: '#result_input',
-})
-```
-
-
-#### Or let the plugin create the raw inputs for you (`submitRaw`)
-```html
-<form>
-  <input type="text" class="number-separator" name="price" />
-</form>
-```
-```javascript
-easyNumberSeparator({
-    selector: '.number-separator',
-    submitRaw: true,
-})
-```
-The visible input keeps the formatted value (its name is moved to `data-name`), and a hidden `<input name="price">` placed right after it is submitted with the raw value (e.g. `1234567.5`). This works for any number of inputs.
-
-### Initial values and values set from code
-Inputs that already have a value when `easyNumberSeparator()` is called are formatted immediately (and copied to `resultInput`).
-If you change a value from code later (for example with jQuery's `.val()`, which does not fire native `input` events), call `refresh()` on the returned object:
-
-```javascript
-const separator = easyNumberSeparator({ selector: '.number-separator', resultInput: '#result_input' })
-
-$('.number-separator').val(1500000)
-separator.refresh() // input shows 1,500,000 and #result_input holds 1500000
-```
-
-Dispatching a native event also works: `input.dispatchEvent(new Event('input'))`.
-
-### Pasting and dropping
-By default, pasted or dropped text is cleaned up and reformatted: anything other than digits, the separators and a leading minus sign is removed, so pasting ` $1,234,567.5 USD` gives `1,234,567.5`.
-
-To block pasting and/or drag-and-drop entirely, opt in:
-
-```javascript
-easyNumberSeparator({
-    selector: '.number-separator',
-    disallowPaste: true,
-    disallowDrop: true,
-})
-```
-
-### Multiple inputs on one page
-All inputs matching `selector` are formatted independently, including inputs that are added to the page later.
-If each input needs its own raw value, use `submitRaw: true`, or call `easyNumberSeparator()` once per input with its own `selector` and `resultInput`:
-
-```javascript
-easyNumberSeparator({ selector: '#price', resultInput: '#price_raw' })
-easyNumberSeparator({ selector: '#amount', resultInput: '#amount_raw' })
-```
-
-### CDN
+**CDN**
 ```html
 <script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js"></script>
 ```
 
-### Running tests
-Tests use Node's built-in test runner (Node 18+) and have no dependencies:
+**Download:** save [`easy-number-separator.js`](https://raw.githubusercontent.com/amiryxe/easy-number-separator/master/easy-number-separator.js) into your project and include it:
+```html
+<script src="js/easy-number-separator.js"></script>
+```
+
+## Quick start
+
+```html
+<input type="text" class="number-separator" />
+
+<script>
+  easyNumberSeparator({ selector: '.number-separator' })
+</script>
+```
+
+## Options
+
+| Option | Default | Description |
+|---|---|---|
+| `selector` | `'.number-separator'` | CSS selector of the input(s) to format |
+| `separator` | `','` | Thousands separator |
+| `decimalSeparator` | `'.'` | Decimal separator |
+| `maxDecimals` | unlimited | Maximum decimal places (`0` = no decimals) |
+| `resultInput` | none | Selector of an input that receives the raw number (e.g. `1234567.5`) |
+| `submitRaw` | `false` | Adds a hidden input with the input's `name` holding the raw number, so forms submit it unformatted |
+| `disallowPaste` | `false` | Block pasting into the input |
+| `disallowDrop` | `false` | Block dragging and dropping text into the input |
+
+## Examples
+
+**Custom separators**
+```js
+easyNumberSeparator({ selector: '.price', separator: '.', decimalSeparator: ',' }) // 1.234.567,89
+```
+
+**Limit decimals and get the raw value**
+```html
+<input type="text" class="price" />
+<input type="hidden" id="price_raw" name="price" />
+```
+```js
+easyNumberSeparator({ selector: '.price', maxDecimals: 2, resultInput: '#price_raw' })
+```
+
+**Submit raw values automatically**
+```html
+<form>
+  <input type="text" class="price" name="price" />
+</form>
+```
+```js
+easyNumberSeparator({ selector: '.price', submitRaw: true })
+```
+The visible input stays formatted (its `name` moves to `data-name`), and a hidden `<input name="price">` placed after it sends the raw number. Works for any number of inputs.
+
+**Several inputs, each with its own raw value**
+```js
+easyNumberSeparator({ selector: '#price', resultInput: '#price_raw' })
+easyNumberSeparator({ selector: '#qty', resultInput: '#qty_raw' })
+```
+Inputs added to the page later are picked up automatically.
+
+**Values set from code**
+
+Inputs that already have a value are formatted on start. If you change a value from code later (e.g. jQuery's `.val()`), call `refresh()`:
+```js
+const separator = easyNumberSeparator({ selector: '.price' })
+$('.price').val(1500000)
+separator.refresh() // 1,500,000
+```
+
+**Pasting**
+
+Pasted or dropped text is cleaned up by default (` $1,234 USD` → `1,234`). To block it instead:
+```js
+easyNumberSeparator({ selector: '.price', disallowPaste: true, disallowDrop: true })
+```
+
+## Development
+
+Open `index.html` in a browser for the demo. Run the tests (Node 18+, no dependencies):
 ```bash
 node --test test/
 ```
-
-Enjoy :)
