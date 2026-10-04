@@ -6,11 +6,15 @@ function easyNumberSeparator(config) {
     separator: config.separator || ",",
     decimalSeparator: config.decimalSeparator || ".",
     resultInput: config.resultInput,
-    maxDecimals: config.maxDecimals
+    maxDecimals: config.maxDecimals,
+    submitRaw: !!config.submitRaw
   }
 
   // Elements already handled by this instance, so listeners are never attached twice
   const boundFields = new WeakSet();
+  // Hidden inputs created by the submitRaw option, keyed by their visible field (#7)
+  const rawInputs = new WeakMap();
+  const rawInputSet = new WeakSet();
 
   // Escape a string so it is matched literally inside a regular expression
   function escapeRegExp(str) {
@@ -60,6 +64,27 @@ function easyNumberSeparator(config) {
         resInput.value = result.raw;
       }
     }
+
+    const rawInput = rawInputs.get(el);
+    if (rawInput) {
+      rawInput.value = result.raw;
+    }
+  }
+
+  // submitRaw: move the field's name to a hidden input that holds the raw value (#7)
+  function createRawInput(el) {
+    const name = el.getAttribute("name");
+    if (!name || !el.parentNode) return;
+
+    const rawInput = document.createElement("input");
+    rawInput.type = "hidden";
+    rawInput.name = name;
+    rawInputSet.add(rawInput);
+
+    el.removeAttribute("name");
+    el.setAttribute("data-name", name);
+    el.parentNode.insertBefore(rawInput, el.nextSibling);
+    rawInputs.set(el, rawInput);
   }
 
   function onInput(e) {
@@ -76,8 +101,12 @@ function easyNumberSeparator(config) {
   }
 
   function bindField(el) {
-    if (boundFields.has(el)) return;
+    if (boundFields.has(el) || rawInputSet.has(el)) return;
     boundFields.add(el);
+
+    if (obj.submitRaw) {
+      createRawInput(el);
+    }
 
     el.addEventListener("input", onInput);
     formatField(el);
@@ -112,7 +141,9 @@ function easyNumberSeparator(config) {
     // Re-format all matching fields, e.g. after setting their value from code (#13)
     refresh: function () {
       document.querySelectorAll(obj.selector).forEach(function (el) {
-        if (boundFields.has(el)) {
+        if (rawInputSet.has(el)) {
+          return;
+        } else if (boundFields.has(el)) {
           formatField(el);
         } else {
           bindField(el);

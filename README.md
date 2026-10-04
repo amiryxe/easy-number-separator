@@ -38,6 +38,7 @@ easyNumberSeparator({
 |separator|`,`|The character of number separator|
 |decimalSeparator|`.`|The character of decimal separator|
 |resultInput|-|Raw number generated for purposes such as server submission and calculations|
+|submitRaw|`false`|When `true`, each input's `name` is moved to an automatically created hidden input that holds the raw value, so forms submit the unformatted number|
 |maxDecimals|-|Maximum number of decimal places allowed (e.g. `2`). `0` disallows decimals. Unlimited when not set|
 
 ### Send data to server
@@ -59,6 +60,20 @@ easyNumberSeparator({
 ```
 
 
+#### Or let the plugin create the raw inputs for you (`submitRaw`)
+```html
+<form>
+  <input type="text" class="number-separator" name="price" />
+</form>
+```
+```javascript
+easyNumberSeparator({
+    selector: '.number-separator',
+    submitRaw: true,
+})
+```
+The visible input keeps the formatted value (its name is moved to `data-name`), and a hidden `<input name="price">` placed right after it is submitted with the raw value (e.g. `1234567.5`). This works for any number of inputs.
+
 ### Initial values and values set from code
 Inputs that already have a value when `easyNumberSeparator()` is called are formatted immediately (and copied to `resultInput`).
 If you change a value from code later (for example with jQuery's `.val()`, which does not fire native `input` events), call `refresh()` on the returned object:
@@ -74,7 +89,7 @@ Dispatching a native event also works: `input.dispatchEvent(new Event('input'))`
 
 ### Multiple inputs on one page
 All inputs matching `selector` are formatted independently, including inputs that are added to the page later.
-If each input needs its own raw value input, call `easyNumberSeparator()` once per input with its own `selector` and `resultInput`:
+If each input needs its own raw value, use `submitRaw: true`, or call `easyNumberSeparator()` once per input with its own `selector` and `resultInput`:
 
 ```javascript
 easyNumberSeparator({ selector: '#price', resultInput: '#price_raw' })

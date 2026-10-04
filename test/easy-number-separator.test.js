@@ -196,3 +196,57 @@ test("#13: dispatching a native input event re-formats the field", () => {
   input.dispatchEvent({ type: "input", data: null });
   assert.equal(input.value, "5,000,000");
 });
+
+test("#7: submitRaw submits the raw value under the input's name", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator", name: "price" });
+  easyNumberSeparator({ submitRaw: true });
+
+  const hidden = document.querySelectorAll("input").filter((el) => el.type === "hidden");
+  assert.equal(hidden.length, 1);
+  assert.equal(hidden[0].name, "price");
+  assert.equal(input.getAttribute("name"), null);
+  assert.equal(input.getAttribute("data-name"), "price");
+  assert.equal(input.nextSibling, hidden[0]);
+
+  type(input, "1234567.5");
+  assert.equal(input.value, "1,234,567.5");
+  assert.equal(hidden[0].value, "1234567.5");
+});
+
+test("#7/#10: submitRaw gives every input its own raw value", async () => {
+  const { document, easyNumberSeparator } = load();
+  const a = addInput(document, { class: "number-separator", name: "a", value: "1000" });
+  const b = addInput(document, { class: "number-separator", name: "b" });
+  easyNumberSeparator({ submitRaw: true });
+  const c = addInput(document, { class: "number-separator", name: "c" });
+  await tick();
+
+  type(b, "25000");
+  type(c, "7");
+  const raw = (name) => document.querySelectorAll("input").find((el) => el.type === "hidden" && el.name === name).value;
+  assert.equal(a.value, "1,000");
+  assert.equal(raw("a"), "1000");
+  assert.equal(raw("b"), "25000");
+  assert.equal(raw("c"), "7");
+});
+
+test("#7: submitRaw does not bind its own hidden inputs even with a broad selector", async () => {
+  const { document, easyNumberSeparator } = load();
+  addInput(document, { name: "total" });
+  easyNumberSeparator({ selector: "input", submitRaw: true });
+  await tick();
+
+  const inputs = document.querySelectorAll("input");
+  assert.equal(inputs.length, 2);
+  assert.equal(inputs.filter((el) => el.type === "hidden").length, 1);
+});
+
+test("#7: submitRaw is off by default", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator", name: "price" });
+  easyNumberSeparator({});
+
+  assert.equal(input.getAttribute("name"), "price");
+  assert.equal(document.querySelectorAll("input").length, 1);
+});
