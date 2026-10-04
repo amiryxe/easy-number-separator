@@ -6,7 +6,8 @@ function easyNumberSeparator(config) {
     selector: config.selector || ".number-separator",
     separator: config.separator || ",",
     decimalSeparator: config.decimalSeparator || ".",
-    resultInput: config.resultInput
+    resultInput: config.resultInput,
+    maxDecimals: config.maxDecimals
   }
 
   // Escape a string so it is matched literally inside a regular expression
@@ -21,7 +22,15 @@ function easyNumberSeparator(config) {
 
     x = num.split(obj.decimalSeparator);
     y = x[0];
-    z = x.length > 1 ? obj.decimalSeparator + x[1] : "";
+    let decimals = x.length > 1 ? x[1] : null;
+
+    // Limit the number of decimal places (#9)
+    if (decimals !== null && typeof obj.maxDecimals === "number" && obj.maxDecimals >= 0) {
+      decimals = obj.maxDecimals === 0 ? null : decimals.slice(0, obj.maxDecimals);
+    }
+
+    z = decimals !== null ? obj.decimalSeparator + decimals : "";
+    const raw = y + (decimals !== null ? "." + decimals : "");
     let rgx = /(\d+)(\d{3})/;
 
     while (rgx.test(y)) {
@@ -33,8 +42,7 @@ function easyNumberSeparator(config) {
       const resInput = document.querySelector(obj.resultInput)
 
       if (resInput) {
-        resInput.value = num.replace(obj.separator, "")
-        resInput.value = num.replace(obj.decimalSeparator, ".")
+        resInput.value = raw
       }
     }
 

@@ -37,7 +37,8 @@ easyNumberSeparator({
 |selector|`.number-separator`|Selects the input element|
 |separator|`,`|The character of number separator|
 |decimalSeparator|`.`|The character of decimal separator|
-|resultInput|-|Raw number generated for purposes such as server submission and calculations| 
+|resultInput|-|Raw number generated for purposes such as server submission and calculations|
+|maxDecimals|-|Maximum number of decimal places allowed (e.g. `2`). `0` disallows decimals. Unlimited when not set|
 
 ### Send data to server
 If you want to send pure data to the server (without symbols), you can set a result input by `resultInput` property and hold the original value.
