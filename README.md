@@ -59,6 +59,19 @@ easyNumberSeparator({
 ```
 
 
+### Initial values and values set from code
+Inputs that already have a value when `easyNumberSeparator()` is called are formatted immediately (and copied to `resultInput`).
+If you change a value from code later (for example with jQuery's `.val()`, which does not fire native `input` events), call `refresh()` on the returned object:
+
+```javascript
+const separator = easyNumberSeparator({ selector: '.number-separator', resultInput: '#result_input' })
+
+$('.number-separator').val(1500000)
+separator.refresh() // input shows 1,500,000 and #result_input holds 1500000
+```
+
+Dispatching a native event also works: `input.dispatchEvent(new Event('input'))`.
+
 ### Multiple inputs on one page
 All inputs matching `selector` are formatted independently, including inputs that are added to the page later.
 If each input needs its own raw value input, call `easyNumberSeparator()` once per input with its own `selector` and `resultInput`:

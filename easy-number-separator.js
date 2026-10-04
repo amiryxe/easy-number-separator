@@ -107,4 +107,17 @@ function easyNumberSeparator(config) {
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
   }
+
+  return {
+    // Re-format all matching fields, e.g. after setting their value from code (#13)
+    refresh: function () {
+      document.querySelectorAll(obj.selector).forEach(function (el) {
+        if (boundFields.has(el)) {
+          formatField(el);
+        } else {
+          bindField(el);
+        }
+      });
+    }
+  };
 }

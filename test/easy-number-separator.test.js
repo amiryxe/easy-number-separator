@@ -161,3 +161,38 @@ test("#6: inputs nested inside an appended container are bound", async () => {
   type(inner, "1000000");
   assert.equal(inner.value, "1,000,000");
 });
+
+test("#13: an initial value is formatted on load and copied to resultInput", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator", value: "1234567.5" });
+  const result = addInput(document, { id: "result_input" });
+  easyNumberSeparator({ resultInput: "#result_input" });
+
+  assert.equal(input.value, "1,234,567.5");
+  assert.equal(result.value, "1234567.5");
+});
+
+test("#13: refresh() re-formats values set from code after initialisation", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  const result = addInput(document, { id: "result_input" });
+  const separator = easyNumberSeparator({ resultInput: "#result_input" });
+
+  input.value = "9876543"; // e.g. set by a form library or jQuery .val()
+  separator.refresh();
+  assert.equal(input.value, "9,876,543");
+  assert.equal(result.value, "9876543");
+
+  type(input, "2");
+  assert.equal(input.value, "98,765,432");
+});
+
+test("#13: dispatching a native input event re-formats the field", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({});
+
+  input.value = "5000000";
+  input.dispatchEvent({ type: "input", data: null });
+  assert.equal(input.value, "5,000,000");
+});
