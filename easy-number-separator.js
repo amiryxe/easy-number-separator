@@ -1,6 +1,5 @@
 function easyNumberSeparator(config) {
-  // Currency Separator
-  let commaCounter = 10;
+  config = config || {};
 
   const obj = {
     selector: config.selector || ".number-separator",
@@ -10,74 +9,102 @@ function easyNumberSeparator(config) {
     maxDecimals: config.maxDecimals
   }
 
+  // Elements already handled by this instance, so listeners are never attached twice
+  const boundFields = new WeakSet();
+
   // Escape a string so it is matched literally inside a regular expression
   function escapeRegExp(str) {
     return String(str).replace(/[.*+?^${}()|[\]\\\-\/]/g, "\\$&");
   }
 
-  function numberSeparator(num) {
-    for (let i = 0; i < commaCounter; i++) {
-      num = num.replace(obj.separator, "");
-    }
+  const sep = escapeRegExp(obj.separator);
+  const dec = escapeRegExp(obj.decimalSeparator);
+  const allowedInput = new RegExp(
+    `^-?\\d*[${sep}${dec}]?(\\d{0,3}${sep})*(\\d{3}${sep})?\\d{0,3}$`
+  );
 
-    x = num.split(obj.decimalSeparator);
-    y = x[0];
-    let decimals = x.length > 1 ? x[1] : null;
+  // Returns the formatted value and the raw value (no separators, "." as decimal point)
+  function parseNumber(value) {
+    const num = String(value).split(obj.separator).join("");
+    const parts = num.split(obj.decimalSeparator);
+    const integer = parts[0];
+    let decimals = parts.length > 1 ? parts[1] : null;
 
     // Limit the number of decimal places (#9)
     if (decimals !== null && typeof obj.maxDecimals === "number" && obj.maxDecimals >= 0) {
       decimals = obj.maxDecimals === 0 ? null : decimals.slice(0, obj.maxDecimals);
     }
 
-    z = decimals !== null ? obj.decimalSeparator + decimals : "";
-    const raw = y + (decimals !== null ? "." + decimals : "");
-    let rgx = /(\d+)(\d{3})/;
-
-    while (rgx.test(y)) {
-      y = y.replace(rgx, "$1" + obj.separator + "$2");
+    const rgx = /(\d+)(\d{3})/;
+    let formatted = integer;
+    while (rgx.test(formatted)) {
+      formatted = formatted.replace(rgx, function (match, head, tail) {
+        return head + obj.separator + tail;
+      });
     }
-    commaCounter++;
+
+    return {
+      formatted: formatted + (decimals !== null ? obj.decimalSeparator + decimals : ""),
+      raw: integer + (decimals !== null ? "." + decimals : "")
+    };
+  }
+
+  function formatField(el) {
+    const result = parseNumber(el.value);
+    el.value = result.formatted;
 
     if (obj.resultInput) {
-      const resInput = document.querySelector(obj.resultInput)
+      const resInput = document.querySelector(obj.resultInput);
 
       if (resInput) {
-        resInput.value = raw
+        resInput.value = result.raw;
       }
     }
-
-    return y + z;
   }
 
-  function listenFields() {
-    document.querySelectorAll(obj.selector).forEach(function (el) {
-      el.addEventListener("input", function (e) {
-        const sep = escapeRegExp(obj.separator);
-        const dec = escapeRegExp(obj.decimalSeparator);
-        const reg = new RegExp(
-          `^-?\\d*[${sep}${dec}]?(\\d{0,3}${sep})*(\\d{3}${sep})?\\d{0,3}$`
-        );
+  function onInput(e) {
+    const el = e.target;
+    const key = e.data || el.value.substr(-1);
 
-        const key = e.data || this.value.substr(-1)
-
-        if (reg.test(key)) {
-          e.target.value = numberSeparator(e.target.value);
-        } else {
-          e.target.value = e.target.value.substring(0, e.target.value.length - 1);
-          e.preventDefault();
-          return false;
-        }
-      });
-      el.value = numberSeparator(el.value);
-    });
-  }
-
-  listenFields()
-
-  // Fire separator when every element append to page
-  document.addEventListener("DOMNodeInserted", function (e) {
-    if ((e.target).classList.contains(obj.selector.replace('.', ''))) {
-      listenFields()
+    if (allowedInput.test(key)) {
+      formatField(el);
+    } else {
+      el.value = el.value.substring(0, el.value.length - 1);
+      e.preventDefault();
+      return false;
     }
-  });
+  }
+
+  function bindField(el) {
+    if (boundFields.has(el)) return;
+    boundFields.add(el);
+
+    el.addEventListener("input", onInput);
+    formatField(el);
+  }
+
+  // Bind every matching field inside root (and root itself if it matches)
+  function listenFields(root) {
+    if (root.matches && root.matches(obj.selector)) {
+      bindField(root);
+    }
+    if (root.querySelectorAll) {
+      root.querySelectorAll(obj.selector).forEach(bindField);
+    }
+  }
+
+  listenFields(document);
+
+  // Fire separator when matching elements are appended to the page (#6).
+  // MutationObserver replaces the deprecated (and now removed) DOMNodeInserted event.
+  if (typeof MutationObserver !== "undefined" && document.documentElement) {
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType === 1) listenFields(node);
+        });
+      });
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
 }

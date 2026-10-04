@@ -59,6 +59,15 @@ easyNumberSeparator({
 ```
 
 
+### Multiple inputs on one page
+All inputs matching `selector` are formatted independently, including inputs that are added to the page later.
+If each input needs its own raw value input, call `easyNumberSeparator()` once per input with its own `selector` and `resultInput`:
+
+```javascript
+easyNumberSeparator({ selector: '#price', resultInput: '#price_raw' })
+easyNumberSeparator({ selector: '#amount', resultInput: '#amount_raw' })
+```
+
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/gh/amiryxe/easy-number-separator/easy-number-separator.js"></script>

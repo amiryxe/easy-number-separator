@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { load, addInput, type } = require("./dom-shim");
+const { load, addInput, type, tick } = require("./dom-shim");
 
 test("formats a number with the default comma separator", () => {
   const { document, easyNumberSeparator } = load();
@@ -87,4 +87,77 @@ test("decimals are unlimited when maxDecimals is not set", () => {
 
   type(input, "1.123456");
   assert.equal(input.value, "1.123456");
+});
+
+test("#11: two inputs on one page are formatted independently", () => {
+  const { document, easyNumberSeparator } = load();
+  const a = addInput(document, { class: "number-separator" });
+  const b = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({});
+
+  type(a, "1234");
+  type(b, "98765x4");
+  type(a, "5");
+  assert.equal(a.value, "12,345");
+  assert.equal(b.value, "987,654");
+});
+
+test("#11: separate calls with different selectors and result inputs", () => {
+  const { document, easyNumberSeparator } = load();
+  const a = addInput(document, { id: "price" });
+  const aRaw = addInput(document, { id: "price_raw" });
+  const b = addInput(document, { id: "amount" });
+  const bRaw = addInput(document, { id: "amount_raw" });
+  easyNumberSeparator({ selector: "#price", resultInput: "#price_raw" });
+  easyNumberSeparator({ selector: "#amount", separator: ".", decimalSeparator: ",", resultInput: "#amount_raw" });
+
+  type(a, "1234.5");
+  type(b, "7654321,25");
+  assert.equal(a.value, "1,234.5");
+  assert.equal(aRaw.value, "1234.5");
+  assert.equal(b.value, "7.654.321,25");
+  assert.equal(bRaw.value, "7654321.25");
+});
+
+test("#11: does not leak global variables (works in strict mode / with page globals)", () => {
+  const { context, document, easyNumberSeparator } = load();
+  const a = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({});
+  type(a, "1234.5");
+  assert.equal(a.value, "1,234.5");
+  assert.equal("x" in context, false);
+  assert.equal("y" in context, false);
+  assert.equal("z" in context, false);
+});
+
+test("#11/#6: inputs added later are bound once, existing inputs are not bound twice", async () => {
+  const { document, easyNumberSeparator } = load();
+  const a = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({});
+
+  const b = addInput(document, { class: "number-separator" });
+  const c = addInput(document, { class: "number-separator" });
+  await tick();
+
+  assert.equal((a.listeners.input || []).length, 1);
+  assert.equal((b.listeners.input || []).length, 1);
+  assert.equal((c.listeners.input || []).length, 1);
+
+  type(b, "12x345");
+  assert.equal(b.value, "12,345");
+});
+
+test("#6: inputs nested inside an appended container are bound", async () => {
+  const { document, easyNumberSeparator } = load();
+  easyNumberSeparator({ selector: "input.money" });
+
+  const wrapper = document.createElement("div");
+  const inner = document.createElement("input");
+  inner.setAttribute("class", "money");
+  wrapper.appendChild(inner);
+  document.body.appendChild(wrapper);
+  await tick();
+
+  type(inner, "1000000");
+  assert.equal(inner.value, "1,000,000");
 });
