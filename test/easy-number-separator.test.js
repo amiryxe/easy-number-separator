@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { load, addInput, type, tick } = require("./dom-shim");
+const { load, addInput, type, paste, tick } = require("./dom-shim");
 
 test("formats a number with the default comma separator", () => {
   const { document, easyNumberSeparator } = load();
@@ -249,4 +249,94 @@ test("#7: submitRaw is off by default", () => {
 
   assert.equal(input.getAttribute("name"), "price");
   assert.equal(document.querySelectorAll("input").length, 1);
+});
+
+test("#12: pasting a clean number is formatted (unchanged behaviour)", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  const result = addInput(document, { id: "result_input" });
+  easyNumberSeparator({ resultInput: "#result_input" });
+
+  assert.equal(paste(input, "1234567.89"), true);
+  assert.equal(input.value, "1,234,567.89");
+  assert.equal(result.value, "1234567.89");
+});
+
+test("#12: pasted text with symbols, spaces or letters is sanitized and reformatted", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  const result = addInput(document, { id: "result_input" });
+  easyNumberSeparator({ resultInput: "#result_input" });
+
+  paste(input, " $1,234,567.5 USD");
+  assert.equal(input.value, "1,234,567.5");
+  assert.equal(result.value, "1234567.5");
+});
+
+test("#12: pasting into an existing value keeps a leading minus and respects maxDecimals", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({ maxDecimals: 2 });
+
+  type(input, "-12");
+  paste(input, "34-5.6789abc");
+  assert.equal(input.value, "-12,345.67");
+});
+
+test("#12: dropped text is sanitized too, with custom separators", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({ separator: ".", decimalSeparator: "," });
+
+  paste(input, "EUR 1.234.567,89", "drop");
+  assert.equal(input.value, "1.234.567,89");
+});
+
+test("#12: disallowPaste blocks pasting but typing still works", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({ disallowPaste: true });
+
+  assert.equal(paste(input, "999"), false);
+  assert.equal(input.value, "");
+  assert.equal(paste(input, "999", "drop"), true); // drop still allowed
+  type(input, "1");
+  assert.equal(input.value, "9,991");
+});
+
+test("#12: disallowDrop blocks drag-and-drop only", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({ disallowDrop: true });
+
+  assert.equal(paste(input, "5000", "drop"), false);
+  assert.equal(input.value, "");
+  assert.equal(paste(input, "5000"), true);
+  assert.equal(input.value, "5,000");
+});
+
+test("#12: paste and drop are allowed by default", () => {
+  const { document, easyNumberSeparator } = load();
+  const input = addInput(document, { class: "number-separator" });
+  easyNumberSeparator({});
+
+  assert.equal(input.listeners.paste, undefined);
+  assert.equal(input.listeners.drop, undefined);
+});
+
+test("#12: disallow options apply to appended inputs and work with submitRaw/refresh", async () => {
+  const { document, easyNumberSeparator } = load();
+  const separator = easyNumberSeparator({ disallowPaste: true, disallowDrop: true, submitRaw: true });
+  const input = addInput(document, { class: "number-separator", name: "price" });
+  await tick();
+  separator.refresh();
+
+  assert.equal((input.listeners.paste || []).length, 1);
+  assert.equal((input.listeners.drop || []).length, 1);
+  assert.equal(paste(input, "1"), false);
+  assert.equal(paste(input, "1", "drop"), false);
+  type(input, "12345");
+  const hidden = document.querySelectorAll("input").find((el) => el.type === "hidden");
+  assert.equal(input.value, "12,345");
+  assert.equal(hidden.value, "12345");
 });

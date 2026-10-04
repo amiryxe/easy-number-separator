@@ -7,7 +7,9 @@ function easyNumberSeparator(config) {
     decimalSeparator: config.decimalSeparator || ".",
     resultInput: config.resultInput,
     maxDecimals: config.maxDecimals,
-    submitRaw: !!config.submitRaw
+    submitRaw: !!config.submitRaw,
+    disallowPaste: !!config.disallowPaste,
+    disallowDrop: !!config.disallowDrop
   }
 
   // Elements already handled by this instance, so listeners are never attached twice
@@ -87,8 +89,27 @@ function easyNumberSeparator(config) {
     rawInputs.set(el, rawInput);
   }
 
+  // Keep only digits, separators and a leading minus sign (used for pasted/dropped text)
+  const disallowedChars = new RegExp(`[^\\d${sep}${dec}-]`, "g");
+  function sanitize(value) {
+    const cleaned = String(value).replace(disallowedChars, "");
+    return (cleaned.charAt(0) === "-" ? "-" : "") + cleaned.replace(/-/g, "");
+  }
+
+  function preventEvent(e) {
+    e.preventDefault();
+  }
+
   function onInput(e) {
     const el = e.target;
+
+    // Pasted or dropped text: strip invalid characters, then reformat the whole value
+    if (e.inputType === "insertFromPaste" || e.inputType === "insertFromDrop") {
+      el.value = sanitize(el.value);
+      formatField(el);
+      return;
+    }
+
     const key = e.data || el.value.substr(-1);
 
     if (allowedInput.test(key)) {
@@ -106,6 +127,13 @@ function easyNumberSeparator(config) {
 
     if (obj.submitRaw) {
       createRawInput(el);
+    }
+
+    if (obj.disallowPaste) {
+      el.addEventListener("paste", preventEvent);
+    }
+    if (obj.disallowDrop) {
+      el.addEventListener("drop", preventEvent);
     }
 
     el.addEventListener("input", onInput);

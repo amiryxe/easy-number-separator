@@ -137,6 +137,17 @@ function type(el, text) {
   }
 }
 
+// Simulate pasting (or dropping) text at the end of the input. Returns false if the
+// paste/drop event was cancelled, in which case the value is left untouched.
+function paste(el, text, kind) {
+  kind = kind || "paste";
+  const allowed = el.dispatchEvent({ type: kind });
+  if (!allowed) return false;
+  el.value += text;
+  el.dispatchEvent({ type: "input", inputType: kind === "drop" ? "insertFromDrop" : "insertFromPaste", data: text });
+  return true;
+}
+
 // Load the plugin into a fresh sandbox with its own DOM.
 function load() {
   const dom = createDom();
@@ -155,4 +166,4 @@ function load() {
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
-module.exports = { load, addInput, type, tick };
+module.exports = { load, addInput, type, paste, tick };

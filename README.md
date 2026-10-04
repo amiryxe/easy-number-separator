@@ -40,6 +40,8 @@ easyNumberSeparator({
 |resultInput|-|Raw number generated for purposes such as server submission and calculations|
 |submitRaw|`false`|When `true`, each input's `name` is moved to an automatically created hidden input that holds the raw value, so forms submit the unformatted number|
 |maxDecimals|-|Maximum number of decimal places allowed (e.g. `2`). `0` disallows decimals. Unlimited when not set|
+|disallowPaste|`false`|When `true`, pasting into the input is blocked|
+|disallowDrop|`false`|When `true`, dragging and dropping text into the input is blocked|
 
 ### Send data to server
 If you want to send pure data to the server (without symbols), you can set a result input by `resultInput` property and hold the original value.
@@ -86,6 +88,19 @@ separator.refresh() // input shows 1,500,000 and #result_input holds 1500000
 ```
 
 Dispatching a native event also works: `input.dispatchEvent(new Event('input'))`.
+
+### Pasting and dropping
+By default, pasted or dropped text is cleaned up and reformatted: anything other than digits, the separators and a leading minus sign is removed, so pasting ` $1,234,567.5 USD` gives `1,234,567.5`.
+
+To block pasting and/or drag-and-drop entirely, opt in:
+
+```javascript
+easyNumberSeparator({
+    selector: '.number-separator',
+    disallowPaste: true,
+    disallowDrop: true,
+})
+```
 
 ### Multiple inputs on one page
 All inputs matching `selector` are formatted independently, including inputs that are added to the page later.
